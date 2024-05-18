@@ -1,6 +1,6 @@
 //
 //  SerializationSafeDefault.swift
-//  SafeCodeable
+//  SafeCodable
 //
 //  Created by 聂小波 on 2024/4/16.
 //

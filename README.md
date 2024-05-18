@@ -1,6 +1,10 @@
 # Codable
 Swift Codable、 safe Codable 支持空安全、类型自动转化、model、Array、Enum
 
+使用：添加SafeCodable文件夹
+
+Usage：
+
 ```swift
 //
 //  SafeCodableTests.swift
