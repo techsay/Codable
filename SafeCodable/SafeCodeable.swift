@@ -80,6 +80,10 @@ public struct SerializationSafeDefault<Provider: SerialSafeDefaultValueProvider>
             wrappedValue = Provider.default
         }
     }
+    
+    public func encode(to encoder: any Encoder) throws {
+        try wrappedValue.encode(to: encoder)
+    }
 }
 
 extension SerializationSafeDefault: Equatable where Provider.Value: Equatable {}
@@ -355,33 +359,33 @@ public struct SerialOptionSafeDictionary<T: Hashable & Codable, A: Codable>: Cod
 
 //MARK: Key Decoding
 extension KeyedDecodingContainer {
-    func decode<P>(_: SerialOptionSafeValue<P>.Type, forKey key: Key) throws -> SerialOptionSafeValue<P> {
+    public func decode<P>(_: SerialOptionSafeValue<P>.Type, forKey key: Key) throws -> SerialOptionSafeValue<P> {
         if let value = try? decodeIfPresent(SerialOptionSafeValue<P>.self, forKey: key) {
             return value
         }
         return SerialOptionSafeValue()
     }
     
-    func decode<P>(_: SerialOptionSafeModel<P>.Type, forKey key: Key) throws -> SerialOptionSafeModel<P> {
+    public func decode<P>(_: SerialOptionSafeModel<P>.Type, forKey key: Key) throws -> SerialOptionSafeModel<P> {
         if let value = try? decodeIfPresent(SerialOptionSafeModel<P>.self, forKey: key) {
             return value
         }
         return SerialOptionSafeModel(wrappedValue: nil)
     }
-    func decode<P>(_: SerialOptionSafeArray<P>.Type, forKey key: Key) throws -> SerialOptionSafeArray<P> {
+    public func decode<P>(_: SerialOptionSafeArray<P>.Type, forKey key: Key) throws -> SerialOptionSafeArray<P> {
         if let value = try? decodeIfPresent(SerialOptionSafeArray<P>.self, forKey: key) {
             return value
-        } 
+        }
         return SerialOptionSafeArray(wrappedValue: nil)
     }
-    func decode<P>(_: SerialOptionSafeDefaultEnum<P>.Type, forKey key: Key) throws -> SerialOptionSafeDefaultEnum<P> {
+    public func decode<P>(_: SerialOptionSafeDefaultEnum<P>.Type, forKey key: Key) throws -> SerialOptionSafeDefaultEnum<P> {
         if let value = try? decodeIfPresent(SerialOptionSafeDefaultEnum<P>.self, forKey: key) {
             return value
-        } 
+        }
         return SerialOptionSafeDefaultEnum(wrappedValue: nil)
     }
     
-    func decode<P,V>(_: SerialOptionSafeDictionary<P,V>.Type, forKey key: Key) throws -> SerialOptionSafeDictionary<P,V> {
+    public func decode<P,V>(_: SerialOptionSafeDictionary<P,V>.Type, forKey key: Key) throws -> SerialOptionSafeDictionary<P,V> {
         if let value = try? decodeIfPresent(SerialOptionSafeDictionary<P,V>.self, forKey: key) {
             return value
         }
@@ -392,39 +396,31 @@ extension KeyedDecodingContainer {
 
 //MARK: Key Decoding
 extension KeyedDecodingContainer {
-    func decode<P: SerialSafeDefaultValueProvider>(_: SerializationSafeDefault<P>.Type, forKey key: Key) throws -> SerializationSafeDefault<P> {
+    public func decode<P: SerialSafeDefaultValueProvider>(_: SerializationSafeDefault<P>.Type, forKey key: Key) throws -> SerializationSafeDefault<P> {
         if let value = try? decodeIfPresent(SerializationSafeDefault<P>.self, forKey: key) {
             return value
-        } 
+        }
         return SerializationSafeDefault()
     }
     
-    func decode<P>(_: SerialSafeArray<P>.Type, forKey key: Key) throws -> SerialSafeArray<P> {
+    public func decode<P>(_: SerialSafeArray<P>.Type, forKey key: Key) throws -> SerialSafeArray<P> {
         if let value = try? decodeIfPresent(SerialSafeArray<P>.self, forKey: key) {
             return value
         }
         return SerialSafeArray(wrappedValue: [])
     }
     
-    func decode<P>(_: SerialSafeDefaultEnum<P>.Type, forKey key: Key) throws -> SerialSafeDefaultEnum<P> {
+    public func decode<P>(_: SerialSafeDefaultEnum<P>.Type, forKey key: Key) throws -> SerialSafeDefaultEnum<P> {
         if let value = try? decodeIfPresent(SerialSafeDefaultEnum<P>.self, forKey: key) {
             return value
-        } 
+        }
         return SerialSafeDefaultEnum(wrappedValue: P.defaultValue())
     }
-    func decode<P,V>(_: SerialSafeDefaultDictionary<P,V>.Type, forKey key: Key) throws -> SerialSafeDefaultDictionary<P,V> {
+    public func decode<P,V>(_: SerialSafeDefaultDictionary<P,V>.Type, forKey key: Key) throws -> SerialSafeDefaultDictionary<P,V> {
         if let value = try? decodeIfPresent(SerialSafeDefaultDictionary<P,V>.self, forKey: key) {
             return value
-        } 
+        }
         return SerialSafeDefaultDictionary(wrappedValue: [:])
-    }
-}
-
-//MARK: Key Encoding
-extension KeyedEncodingContainer {
-    mutating func encode<P>(_ value: SerializationSafeDefault<P>, forKey key: Key) throws {
-        guard value.wrappedValue != P.default else { return }
-        try encode(value.wrappedValue, forKey: key)
     }
 }
 
